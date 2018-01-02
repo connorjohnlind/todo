@@ -1,6 +1,4 @@
 // Copyright Connor Lind, 2017
-// src folder contains unprocessed Sass, JS, and images
-// dist folder contains production-ready HTML, Fonts, and JSON
 
 const autoprefixer = require('autoprefixer'),
   babelify = require('babelify'),
@@ -36,7 +34,7 @@ const config = {
   }
 };
 
-/* CSS Build */
+/* CSS BUILD */
 gulp.task('sass', () => {
   const plugins = [
     autoprefixer(),
@@ -57,13 +55,13 @@ gulp.task('sass-reload', ['sass'], () => {
     browserSync.reload();
 });
 
-/* JS Build */
+/* JS BUILD */
 gulp.task('js', () => {
   const b = browserify({
     entries: config.src.entryPoint,
     debug: true,
     transform: [babelify.configure({
-      presets: ['env']
+      presets: ['env', 'react']
     })]
   });
 
@@ -84,7 +82,6 @@ gulp.task('js-reload', ['js'], () => {
 });
 
 /* HTML BUILD */
-
 gulp.task('html', () => {
   return gulp.src(config.src.htmlWatch)
     .pipe(gulp.dest(config.dist.root))
