@@ -25,7 +25,8 @@ const config = {
     css: 'src-vanilla/css',
     entryPoint: 'src-vanilla/js/index.js',
     sassWatch: 'src-vanilla/scss/**/*.scss',
-    jsWatch: 'src-vanilla/js/**/*.js'
+    jsWatch: 'src-vanilla/js/**/*.js',
+    htmlWatch: 'src-vanilla/*.html'
   },
   dist: {
     root: 'dist',
@@ -82,6 +83,18 @@ gulp.task('js-reload', ['js'], () => {
     browserSync.reload();
 });
 
+/* HTML BUILD */
+
+gulp.task('html', () => {
+  return gulp.src(config.src.htmlWatch)
+    .pipe(gulp.dest(config.dist.root))
+});
+
+gulp.task('html-reload', ['html'], () => {
+    browserSync.reload();
+});
+
+
 /********************DEFAULT********************/
 
 // Launch browserSync and watch HTML, JS and Sass files for reload
@@ -98,12 +111,10 @@ gulp.task('default', ['js', 'sass'], () => {
   // html is reloaded from dist because it has no pre-processing
   gulp.watch(config.src.jsWatch, ['js-reload']);
   gulp.watch(config.src.sassWatch, ['sass-reload']);
-  gulp.watch(config.dist.htmlWatch, () => {
-      browserSync.reload();
-  });
+  gulp.watch(config.src.htmlWatch, ['html-reload']);
 });
 
 /********************BUILD********************/
 
-gulp.task('build', ['js', 'sass'], () => {
+gulp.task('build', ['js', 'sass', 'html'], () => {
 });
