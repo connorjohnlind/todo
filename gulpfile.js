@@ -21,9 +21,10 @@ const config = {
   src: {
     root: 'src-vanilla',
     css: 'src-vanilla/css',
-    entryPoint: 'src-vanilla/js/index.js',
-    sassWatch: 'src-vanilla/scss/**/*.scss',
+    jsEntry: 'src-vanilla/js/index.js',
     jsWatch: 'src-vanilla/js/**/*.js',
+    sassEntry: 'src-vanilla/scss/index.scss',
+    sassWatch: 'src-vanilla/scss/**/*.scss',
     htmlWatch: 'src-vanilla/*.html'
   },
   dist: {
@@ -34,14 +35,14 @@ const config = {
   }
 };
 
-/* CSS BUILD */
+/* CSS Build */
 gulp.task('sass', () => {
   const plugins = [
     autoprefixer(),
     cssnano()
   ];
 
-  return gulp.src(config.src.sassWatch)
+  return gulp.src(config.src.sassEntry)
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
     .pipe(postcss(plugins))
@@ -58,7 +59,7 @@ gulp.task('sass-reload', ['sass'], () => {
 /* JS BUILD */
 gulp.task('js', () => {
   const b = browserify({
-    entries: config.src.entryPoint,
+    entries: config.src.jsEntry,
     debug: true,
     transform: [babelify.configure({
       presets: ['env', 'react']
@@ -95,7 +96,7 @@ gulp.task('html-reload', ['html'], () => {
 /********************DEFAULT********************/
 
 // Launch browserSync and watch HTML, JS and Sass files for reload
-gulp.task('default', ['js', 'sass'], () => {
+gulp.task('default', ['js', 'sass', 'html'], () => {
 
   browserSync.init({
     server: {
