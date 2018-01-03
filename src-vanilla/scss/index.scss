@@ -56,25 +56,38 @@ input[type="checkbox"] {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
               0 25px 50px 0 rgba(0, 0, 0, 0.1);
 
-  input::placeholder {
-    font-style: italic;
-    font-weight: 100;
-    color: #e6e6e6;
-  }
-
-  input.task {
+  .new-task {
     border: 0;
     font-size: 24px;
     font-stretch: 100%;
     width: 100%;
     padding: 16px 16px 16px 60px;
+    outline: none;
+
+    &::placeholder {
+      font-style: italic;
+      font-weight: 100;
+      color: #e6e6e6;
+    }
   }
+
+  .task-list {
+    width: 100%;
+
+    div {
+      margin: 15px 0;
+      font-size: 24px;
+    }
+  }
+
 }
 
 footer {
   margin-top: 50px;
 
   p {
+    margin: 5px;
+    line-height: 1.4em;
     font-size: 12px;
     font-weight: 200;
     color: rgb(191, 191, 191);
