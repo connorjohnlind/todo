@@ -11,7 +11,7 @@ const App = {
     this.render(); },
 
   cacheDom() {
-    this.taskInput = document.querySelector('input.new-task');
+    this.taskInput = document.querySelector('input.task-input');
     this.taskList = document.querySelector('div.task-list');
   },
 

@@ -10,12 +10,12 @@ const Builder = {
             label = document.createElement("label"),
             button = document.createElement("button");
 
-      div.className = "flex row";
+      div.className = "task flex row";
       input.type = "checkbox";
       input.className = "checkbox";
       label.innerHTML = el.text;
       button.className = "remove";
-      button.innerHTML = "X";
+      button.innerHTML = "x";
 
       div.append(input, label, button);
       divArray.push(div);
@@ -27,13 +27,13 @@ const Builder = {
   buildFilters(data) {
     const div = document.createElement("div"),
           span = document.createElement("div"),
-          ul = document.createElement("div"),
-          li1 = document.createElement("div"),
-          li2 = document.createElement("div"),
-          li3 = document.createElement("div"),
+          ul = document.createElement("ul"),
+          li1 = document.createElement("li"),
+          li2 = document.createElement("li"),
+          li3 = document.createElement("li"),
           button = document.createElement("button");
 
-    div.className = "flex row";
+    div.className = "menu flex row";
     span.innerHTML = "XYZ Tasks Left";
     ul.className = "filters flex row";
     li1.innerHTML = "All";
