@@ -11,6 +11,10 @@
   align-items: center;
 }
 
+.row {
+  flex-direction: row;
+}
+
 body {
 
     font-size: 14px;
@@ -51,7 +55,8 @@ input[type="checkbox"] {
 #app {
   background: #fff;
   position: relative;
-  width: 550px;
+  width: 95%;
+  max-width: 95%;
   border: 0;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
               0 25px 50px 0 rgba(0, 0, 0, 0.1);
