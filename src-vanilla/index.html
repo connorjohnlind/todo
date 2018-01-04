@@ -9,8 +9,11 @@
     <main class="flex">
       <h1>todos</h1>
       <div id="app" class="flex">
-        <input class="task-input" type="text" name="task" placeholder="What to do?">
-        <div class="task-list flex">
+        <div class="top-bar flex row">
+          <input type="checkbox" class="check-all invisible" name="check-all" value="">
+          <input type="text" class="task-input" name="task" placeholder="What to do?">
+        </div>
+        <div class="task-container flex">
         </div>
       </div>
     </main>

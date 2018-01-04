@@ -1,3 +1,6 @@
+
+//Purpose: For a given Data object, create DOM Elements
+
 const Builder = {
   buildTasks(data) {
 
@@ -14,7 +17,7 @@ const Builder = {
       input.type = "checkbox";
       input.className = "checkbox";
       label.innerHTML = el.text;
-      button.className = "remove";
+      button.className = "remove invisible";
       button.innerHTML = "x";
 
       div.append(input, label, button);
