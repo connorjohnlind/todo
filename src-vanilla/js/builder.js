@@ -21,7 +21,15 @@ const Builder = {
       button.innerHTML = "x";
 
       //state check
-      el.completed ? input.checked = true : input.checked = false;
+      if (el.completed) {
+        input.checked = true;
+        label.className = "completed";
+        console.log(div + 'is completed');
+      } else {
+        input.checked = false;
+        label.className = "";
+        console.log(div + 'is incomplete');
+      }
 
       div.append(input, label, button);
       divArray.push(div);

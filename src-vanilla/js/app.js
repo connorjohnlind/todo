@@ -98,7 +98,7 @@ const App = {
       });
 
       div.addEventListener("mouseleave", ()=>{
-        div.lastChild.className = "remove invisible"; // removes invisible class
+        div.lastChild.className = "remove invisible"; // adds invisible class
       });
 
       div.lastChild.addEventListener("click", ()=>{
@@ -188,13 +188,13 @@ const App = {
   }
 };
 
-function identicalStatus(array) {
-    for(var i = 0; i < array.length - 1; i++) {
-        if(array[i].completed !== array[i+1].completed) {
+function identicalStatus(data) {
+    for(var i = 0; i < data.length - 1; i++) {
+        if(data[i].completed !== data[i+1].completed) {
             return {identical: false, value: null};
         }
     }
-    return {identical: true, value: array[0].completed};
+    return {identical: true, value: data[0].completed};
 }
 
 export default App;
