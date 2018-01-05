@@ -174,6 +174,9 @@ const App = {
       this.$checkAll.className = "check-all invisible"
       this.$menu.className = "menu flex row hidden";
     }
+
+    this.$taskInput.focus();
+    this.$taskInput.select();
   }
 };
 
