@@ -15,8 +15,9 @@ const App = {
 
   cacheDom() {
     this.$taskInput = document.querySelector('input.task-input');
-    this.$taskContainer = document.querySelector('div.task-container');
     this.$checkAll = document.querySelector('.check-all');
+    this.$taskContainer = document.querySelector('div.task-container');
+    this.$allTasks = Array.from(document.querySelectorAll('.task')) || [];
     this.$menu = document.querySelector('.menu');
     this.$count = document.querySelector('.count');
     this.$filters = Array.from(document.querySelector('.filters').children) || [];
@@ -24,12 +25,11 @@ const App = {
     this.$filterActive = document.querySelector('#filter-active');
     this.$filterCompleted = document.querySelector('#filter-completed');
     this.$clear = document.querySelector('.clear');
-    this.$allTasks = Array.from(document.querySelectorAll('.task')) || [];
   },
 
   bindStatelessEvents() {
 
-    /****** App Input Bar Events *******/
+    /****** TOP INPUT BAR EVENTS *******/
 
     this.$taskInput.addEventListener("keypress", ()=>{
       if ((event.which == 13 || event.keyCode == 13) && this.$taskInput.value !== ""){
@@ -50,7 +50,7 @@ const App = {
       });
     });
 
-    /****** App Menu Bar Events *******/
+    /****** BOTTOM MENU BAR EVENTS *******/
 
     this.$clear.addEventListener("click", ()=>{
       this.removeTasks(this.getCompletedTasks());
@@ -77,7 +77,7 @@ const App = {
 
   bindStatefulEvents() {
 
-    /****** Task Events *******/
+    /****** TASK EVENTS *******/
     // to do: remove event listeners to prevent memory leaks, must use named event handler function
 
     this.$allTasks.forEach((div)=>{
@@ -92,14 +92,39 @@ const App = {
         div.lastChild.className = "remove invisible"; // adds invisible class
       });
 
+      div.firstChild.addEventListener("click", ()=>{
+        this.toggleTaskState(div.children[1].innerText);
+      });
+
+      div.children[1].addEventListener("dblclick", ()=> {
+        div.children[1].className = "hidden";
+        div.children[2].value = div.children[1].innerHTML;
+        div.children[2].className = "task-edit";
+        div.children[2].focus();
+      });
+
+      div.children[2].addEventListener("keypress", ()=>{
+        if ((event.which == 13 || event.keyCode == 13) && div.children[2].value !== ""){
+          this.setTaskText(div.children[1].innerHTML, div.children[2].value);
+          div.children[1].innerHTML = div.children[2].value;
+          div.children[2].className = "task-edit hidden";
+          div.children[1].className = "";
+        }
+      });
+
+      div.children[2].addEventListener("focusout", ()=>{
+        if (div.children[2].value !== ""){
+          this.setTaskText(div.children[1].innerHTML, div.children[2].value);
+          div.children[1].innerHTML = div.children[2].value;
+          div.children[2].className = "task-edit hidden";
+          div.children[1].className = "";
+        }
+      });
+
       div.lastChild.addEventListener("click", ()=>{
         // relate the DOM div to the data array and remove both
         this.removeTasks(div.children[1].innerText.split());
       });
-
-      div.firstChild.addEventListener("click", ()=>{
-        this.toggleTaskState(div.children[1].innerText);
-      })
     });
   },
 
@@ -122,9 +147,19 @@ const App = {
     this.render();
   },
 
+  setTaskText(currentText, newText) {
+    this.data.forEach(el=>{
+      if (el.text === currentText)
+        el.text = newText;
+    })
+  },
+
+  // TO DO: RENAME TO SET TASK STATE
+  // TO DO: RENAME DATA OBJECT FROM 'COMPLETED' TO 'STATE'
+
   // optional value param sets the value
   toggleTaskState(taskText, value=null) {
-    this.data.forEach((el)=>{
+    this.data.forEach(el=>{
       if (el.text === taskText) {
         el.completed = value || !el.completed;
       }
@@ -164,6 +199,9 @@ const App = {
       // append all tasks the taskContainer
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
 
+      // show task container
+      this.$taskContainer.className = "task-container flex";
+
       // bind events to each new task
       this.bindStatefulEvents();
 
@@ -179,7 +217,8 @@ const App = {
       this.$menu.className = "menu flex row";
 
     } else {
-      this.$checkAll.className = "check-all invisible"
+      this.$checkAll.className = "check-all invisible";
+      this.$taskContainer.className = "task-container flex hidden";
       this.$menu.className = "menu flex row hidden";
     }
 
