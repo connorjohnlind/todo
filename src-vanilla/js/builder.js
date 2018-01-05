@@ -1,10 +1,20 @@
 
-//Purpose: For a given Data object, create DOM Elements
+//Purpose: For a given data object and filter, create DOM Elements
 
 const Builder = {
-  buildTasks(data) {
+  buildTasks(data, filterState) {
 
     let divArray = [];
+
+    if (filterState==="active") {
+      data = data.filter((el)=>{
+        return el.completed === false;
+      });
+    } else if (filterState==="completed") {
+      data = data.filter((el)=>{
+        return el.completed === true;
+      });
+    }
 
     data.forEach((el)=>{
 
@@ -24,11 +34,9 @@ const Builder = {
       if (el.completed) {
         input.checked = true;
         label.className = "completed";
-        console.log(div + 'is completed');
       } else {
         input.checked = false;
         label.className = "";
-        console.log(div + 'is incomplete');
       }
 
       div.append(input, label, button);

@@ -5,6 +5,7 @@ const App = {
 
   // source of truth - related to DOM tasks via text property
   data: [],
+  filterState: null,
 
   init() {
     this.cacheDom();
@@ -56,38 +57,25 @@ const App = {
       this.removeTasks(taskRemovals);
     });
 
-
-    // MAJOR ISSUE!!! Filters get messed up after new taks are added
-    // Need to incorporate the filters with the render, not make them stateless event listeners
-
-
     this.$filterAll.addEventListener("click", ()=> {
-      this.$allTasks.forEach((div)=>{
-        div.className = "task flex row";
-      });
       this.$filters.forEach(el=>el.className="");
       this.$filterAll.className = "selected";
+      this.filterTasks("all");
     });
 
     this.$filterActive.addEventListener("click", ()=> {
-      this.$allTasks.forEach((div)=>{
-        div.firstChild.checked === false
-         ? div.className = "task flex row"
-         : div.className = "task flex row hidden";
-      });
       this.$filters.forEach(el=>el.className="");
       this.$filterActive.className = "selected";
+      this.filterTasks("active");
     });
 
     this.$filterCompleted.addEventListener("click", ()=> {
-      this.$allTasks.forEach((div)=>{
-        div.firstChild.checked === true
-         ? div.className = "task flex row"
-         : div.className = "task flex row hidden";
-      });
       this.$filters.forEach(el=>el.className="");
-      this.$filterActive.className = "";
+      this.$filterCompleted.className = "selected";
+      this.filterTasks("completed");
     });
+
+
   },
 
   bindStatefulEvents() {
@@ -103,7 +91,7 @@ const App = {
 
       div.lastChild.addEventListener("click", ()=>{
         // to do: remove event listeners to prevent memory leaks, must use named event handler function
-        //        perhaps need to extrapolate all event handlers to a module
+
         // relate the DOM div to the data array and remove both
         this.removeTasks(div.children[1].innerText.split());
       });
@@ -119,8 +107,9 @@ const App = {
     this.render();
   },
 
-  filterTasks(completed) {
-
+  filterTasks(filterState) {
+    this.filterState = filterState;
+    this.render();
   },
 
   removeTasks(taskTextArray){
@@ -158,7 +147,7 @@ const App = {
       /****** TASKS RENDER *******/
 
       // overwrite the allTasks DOM node array and append each task to the DOM
-      this.$allTasks = Builder.buildTasks(this.data);
+      this.$allTasks = Builder.buildTasks(this.data, this.filterState);
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
 
       // bind events to each new task
