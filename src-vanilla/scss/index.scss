@@ -15,7 +15,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-content: center;
-  padding: 0 10px;
+  padding-left: 1%;
+  padding-right: 2%;
 }
 
 .invisible {
@@ -43,7 +44,7 @@ body {
     h1 {
       font-weight: 100;
       font-size: 100px;
-      color: rgba(47, 138, 175, 0.2);
+      color: rgba(47, 138, 175, 0.4);
     }
 }
 
@@ -79,12 +80,29 @@ input[type="checkbox"] {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
               0 25px 50px 0 rgba(0, 0, 0, 0.1);
 
+  /***** TOP BAR *****/
+
   .top-bar {
     height: 55px;
     width: 100%;
 
     .check-all {
-      width:10%;
+      width:12%;
+      height: 55px;
+      font-size: 22px;
+      color: #e6e6e6;
+      transform: rotate(90deg);
+      text-align: center;
+      padding-top: 5%;
+
+      &:hover {
+        color: #737373;
+        cursor: default;
+      }
+
+      .active {
+        color: #737373;
+      }
     }
 
     .task-input {
@@ -94,7 +112,7 @@ input[type="checkbox"] {
       font-weight: inherit;
       font-size: 24px;
       font-stretch: 100%;
-      width: 90%;
+      width: 88%;
       outline: none;
 
       &::placeholder {
@@ -104,60 +122,108 @@ input[type="checkbox"] {
     }
   }
 
+  /***** TASK CONTATINER *****/
+
   .task-container {
     width: 100%;
     border-top: 1px solid #e6e6e6;
 
     .task {
-      height: 55px;
+      height: 58px;
       width: 100%;
       font-size: 24px;
       border-bottom: 1px solid #ededed;
 
       input {
-        width: 10%;
+        width: 12%;
+        height: 100%;
+        appearance: none;
+        padding: 9px 0;
+        text-align: left;
+
+        &:after {
+        	content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-10 -18 100 135"><circle cx="50" cy="50" r="50" fill="none" stroke="#ededed" stroke-width="3"/></svg>');
+        }
+
+        &:checked:after {
+        	content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-10 -18 100 135"><circle cx="50" cy="50" r="50" fill="none" stroke="#bddad5" stroke-width="3"/><path fill="#5dc2af" d="M72 25L42 71 27 56l-4 4 20 20 34-52z"/></svg>');
+        }
+
+        &:hover {
+          cursor: default;
+        }
+
       }
 
       label {
-        width: 82%;
+        width: 81%;
         text-align: left;
       }
 
-      button {
+      .remove {
         font-size: 35px;
-        width: 8%;
+        width: 7%;
         padding-bottom: 7px;
         color: rgb(204, 154, 154);
+
+        &:hover {
+          color: #8e3134;
+          cursor: default;
+        }
+      }
+    }
+  }
+
+  /***** APP MENU *****/
+
+  .menu {
+    color: inherit;
+    height: 40px;
+    width: 100%;
+    font-size: 14px;
+    padding: 0 3%;
+
+    div {
+      width: 30%;
+    }
+
+    .filters {
+      list-style-type: none;
+      padding: 0;
+      width: 40%;
+
+      .selected {
+        border-color: rgba(47, 138, 175, 0.4);
+      }
+
+      li {
+        border: 1px solid transparent;
+        border-radius: 3px;
+        padding: 2px 8px;
+        margin: 0 7px;
+
+        &:hover {
+          border-color: rgba(47, 138, 175, 0.8);
+          cursor: default;
+        }
       }
     }
 
-    .menu {
-      color: inherit;
-      height: 40px;
-      width: 100%;
-      font-size: 14px;
+    .clear {
+      text-align: right;
+      font-weight: 400;
+      width: 30%;
+      color: rgb(204, 154, 154);
 
-      div {
-        width: 30%;
-      }
-
-      .filters {
-        list-style-type: none;
-        padding: 0;
-        width: 40%;
-
-        li {
-          padding: 0 15px;
-        }
-      }
-
-      button {
-        text-align: right;
-        width: 30%;
+      &:hover {
+        color: #8e3134;
+        cursor: default;
       }
     }
   }
 }
+
+/**** COPYRIGHT FOOTER ****/
 
 footer {
   margin-top: 50px;
