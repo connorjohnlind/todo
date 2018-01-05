@@ -1,11 +1,11 @@
-import Builder from './builder.js';
+import Builder from './taskBuilder.js';
+import Helper from './helper.js';
 
-// TO DO APP
 const App = {
 
-  // source of truth - related to DOM tasks via text property
-  data: [],
-  filterState: null,
+  data: [],  // source of truth - related to tasks in DOM via text property
+
+  filterState: null,  // mirrors the DOM's menu
 
   init() {
     this.cacheDom();
@@ -28,6 +28,9 @@ const App = {
   },
 
   bindStatelessEvents() {
+
+    /****** App Input Bar Events *******/
+
     this.$taskInput.addEventListener("keypress", ()=>{
       if ((event.which == 13 || event.keyCode == 13) && this.$taskInput.value !== ""){
         this.addTask(this.$taskInput.value);
@@ -35,52 +38,52 @@ const App = {
       }
     });
 
-    this.$checkAll.addEventListener("click", ()=> {
-      // mark all as completed if task statuses are mixed
+    this.$checkAll.addEventListener("click", ()=>{
+      // mark all tasks as completed if task statuses are mixed
       let toggle = true;
       // if all tasks have identical status, just swap them
-      if (identicalStatus(this.data).identical) {
-        toggle = !identicalStatus(this.data).value;
+      if (Helper.identicalStatus(this.data).identical) {
+        toggle = !Helper.identicalStatus(this.data).value;
       }
-      this.$allTasks.forEach((div)=>{
-        this.toggleCompleted(div.children[1].innerText, toggle);
+      this.$allTasks.forEach(div=>{
+        this.toggleTaskState(div.children[1].innerText, toggle);
       });
     });
 
-    this.$clear.addEventListener("click", ()=> {
-      let taskRemovals = [];
-      this.data.forEach((el)=>{
-        if (el.completed===true) {
-          taskRemovals.push(el.text);
-        }
-      });
-      this.removeTasks(taskRemovals);
+    /****** App Menu Bar Events *******/
+
+    this.$clear.addEventListener("click", ()=>{
+      this.removeTasks(this.getCompletedTasks());
     });
 
-    this.$filterAll.addEventListener("click", ()=> {
+    this.$filterAll.addEventListener("click", ()=>{
       this.$filters.forEach(el=>el.className="");
       this.$filterAll.className = "selected";
       this.filterTasks("all");
     });
 
-    this.$filterActive.addEventListener("click", ()=> {
+    this.$filterActive.addEventListener("click", ()=>{
       this.$filters.forEach(el=>el.className="");
       this.$filterActive.className = "selected";
       this.filterTasks("active");
     });
 
-    this.$filterCompleted.addEventListener("click", ()=> {
+    this.$filterCompleted.addEventListener("click", ()=>{
       this.$filters.forEach(el=>el.className="");
       this.$filterCompleted.className = "selected";
       this.filterTasks("completed");
     });
-
-
   },
 
   bindStatefulEvents() {
+
+    /****** Task Events *******/
+    // to do: remove event listeners to prevent memory leaks, must use named event handler function
+
     this.$allTasks.forEach((div)=>{
       // div.lastChild === 'X' button
+      // div.children[1].innerText === task text
+
       div.addEventListener("mouseover", ()=>{
         div.lastChild.className = "remove"; // removes invisible class
       });
@@ -90,14 +93,12 @@ const App = {
       });
 
       div.lastChild.addEventListener("click", ()=>{
-        // to do: remove event listeners to prevent memory leaks, must use named event handler function
-
         // relate the DOM div to the data array and remove both
         this.removeTasks(div.children[1].innerText.split());
       });
 
       div.firstChild.addEventListener("click", ()=>{
-        this.toggleCompleted(div.children[1].innerText);
+        this.toggleTaskState(div.children[1].innerText);
       })
     });
   },
@@ -122,7 +123,7 @@ const App = {
   },
 
   // optional value param sets the value
-  toggleCompleted(taskText, value=null) {
+  toggleTaskState(taskText, value=null) {
     this.data.forEach((el)=>{
       if (el.text === taskText) {
         el.completed = value || !el.completed;
@@ -131,7 +132,17 @@ const App = {
     this.render();
   },
 
-  getTaskCount(){
+  getCompletedTasks(){
+    let taskRemovals = [];
+    this.data.forEach((el)=>{
+      if (el.completed===true) {
+        taskRemovals.push(el.text);
+      }
+    });
+    return taskRemovals;
+  },
+
+  getActiveTaskCount(){
     let result = this.data.filter((el)=>{
       return el.completed === false;
     });
@@ -144,26 +155,23 @@ const App = {
 
     if (this.data.length > 0){
 
-      /****** TASKS RENDER *******/
+      // remove the check all button's invisible class
+      this.$checkAll.className = "check-all";
 
-      // overwrite the allTasks DOM node array and append each task to the DOM
+      // overwrite the current allTasks DOM node array with new data
       this.$allTasks = Builder.buildTasks(this.data, this.filterState);
+
+      // append all tasks the taskContainer
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
 
       // bind events to each new task
       this.bindStatefulEvents();
 
-      /****** INPUT RENDER *******/
-      // remove invisible class
-      this.$checkAll.className = "check-all";
-
-      /****** MENU RENDER *******/
-
       // update active task count
-      this.$count.innerHTML = `${this.getTaskCount()} Tasks Left`;
+      this.$count.innerHTML = `${this.getActiveTaskCount()} Tasks Left`;
 
-      // show the clear button
-      this.data.length > this.getTaskCount()
+      // show the clear button if there are completed tasks
+      this.data.length > this.getActiveTaskCount()
         ? this.$clear.className = "clear"
         : this.$clear.className = "clear invisible";
 
@@ -179,14 +187,5 @@ const App = {
     this.$taskInput.select();
   }
 };
-
-function identicalStatus(data) {
-    for(var i = 0; i < data.length - 1; i++) {
-        if(data[i].completed !== data[i+1].completed) {
-            return {identical: false, value: null};
-        }
-    }
-    return {identical: true, value: data[0].completed};
-}
 
 export default App;
