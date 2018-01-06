@@ -1,11 +1,10 @@
-import Builder from './taskBuilder.js';
+import Datastore from './datastore.js'
+import Builder from './builder.js';
 import Helper from './helper.js';
 
 const App = {
 
-  data: [],  // source of truth - related to tasks in DOM via text property
-
-  menuFilter: null,  // mirrors the DOM's menu
+  menuFilter: null,  // source of truth for the DOM's menu
 
   init() {
     this.cacheDom();
@@ -33,28 +32,38 @@ const App = {
 
     this.$taskInput.addEventListener("keypress", ()=>{
       if ((event.which == 13 || event.keyCode == 13) && this.$taskInput.value !== ""){
-        this.addTask(this.$taskInput.value);
+        Datastore.addTask(this.$taskInput.value);
         this.$taskInput.value = "";
+        this.render();
       }
     });
 
     this.$checkAll.addEventListener("click", ()=>{
       // mark all tasks as completed if task statuses are mixed
       let toggle = true;
+      let data = Datastore.getAll();
       // if all tasks have identical status, just swap them
-      if (Helper.identicalStatus(this.data).identical) {
-        toggle = !Helper.identicalStatus(this.data).value;
+      if (Helper.identicalStatus(data).identical) {
+        toggle = !Helper.identicalStatus(data).value;
       }
       this.$allTasks.forEach(div=>{
-        this.setTaskState(div.querySelector('.task-span').innerText, toggle);
+        Datastore.setTaskStatus(div.querySelector('.task-span').innerText, toggle);
       });
+      this.render();
     });
 
     /****** BOTTOM MENU BAR EVENTS *******/
 
     this.$clear.addEventListener("click", ()=>{
-      this.removeTasks(this.getCompletedTasks());
+      Datastore.removeTasks(Datastore.getCompletedTasks());
+      this.render();
     });
+
+
+    // TO DO: Above this line, data is managed and renders happen.
+    //        Below this line, it's pure DOM
+    //        Need to think about consistency
+
 
     this.$filterAll.addEventListener("click", ()=>{
       this.$filters.forEach(el=>el.className="");
@@ -75,6 +84,11 @@ const App = {
     });
   },
 
+
+
+
+
+
   bindStatefulEvents() {
 
     /****** TASK EVENTS *******/
@@ -86,7 +100,6 @@ const App = {
           input = div.querySelector('.task-edit'),
           button = div.querySelector('.task-remove');
 
-
       div.addEventListener("mouseover", ()=>{
         button.className = "task-remove"; // removes invisible class
       });
@@ -96,7 +109,10 @@ const App = {
       });
 
       checkbox.addEventListener("click", ()=>{
-        this.setTaskState(span.innerText);
+        Datastore.setTaskStatus(span.innerText);
+        Datastore.getStatus(span.innerHTML)
+          ? span.className = "task-span completed"
+          : span.className = "task-span";
       });
 
       span.addEventListener("dblclick", ()=> {
@@ -108,11 +124,11 @@ const App = {
 
       input.addEventListener("keypress", ()=>{
         if ((event.which == 13 || event.keyCode == 13) && input.value !== ""){
-          this.setTaskText(span.innerHTML, input.value);
+          Datastore.setTaskText(span.innerHTML, input.value);
           span.innerHTML = input.value;
           input.className = "task-edit hidden";
-          
-          this.getStatus(span.innerHTML)
+
+          Datastore.getStatus(span.innerHTML)
             ? span.className = "task-span completed"
             : span.className = "task-span";
         }
@@ -120,10 +136,10 @@ const App = {
 
       input.addEventListener("focusout", ()=>{
         if (input.value !== ""){
-          this.setTaskText(span.innerHTML, input.value);
+          Datastore.setTaskText(span.innerHTML, input.value);
           span.innerHTML = input.value;
           input.className = "task-edit hidden";
-          this.getStatus(span.innerHTML)
+          Datastore.getStatus(span.innerHTML)
             ? span.className = "task-span completed"
             : span.className = "task-span";
         }
@@ -131,14 +147,10 @@ const App = {
 
       button.addEventListener("click", ()=>{
         // relate the DOM div to the data array and remove both
-        this.removeTasks(span.innerText.split());
+        Datastore.removeTasks(span.innerText.split());
+        this.render();
       });
     });
-  },
-
-  addTask(value) {
-    this.data.push({text: value, status: false});
-    this.render();
   },
 
   filterTasks(menuFilter) {
@@ -146,70 +158,17 @@ const App = {
     this.render();
   },
 
-  removeTasks(taskTextArray){
-    taskTextArray.forEach((taskText)=>{
-      this.data = this.data.filter((el)=>{
-        return el.text !== taskText;
-      });
-    })
-    this.render();
-  },
-
-  setTaskText(currentText, newText) {
-    this.data.forEach(el=>{
-      if (el.text === currentText)
-        el.text = newText;
-    })
-  },
-
-  // optional value param sets the value
-  setTaskState(taskText, value=null) {
-    this.data.forEach(el=>{
-      if (el.text === taskText) {
-        el.status = value || !el.status;
-      }
-    })
-    this.render();
-  },
-
-  getStatus(taskText) {
-    let result;
-    this.data.forEach(el=>{
-      if (el.text === taskText)
-        result = el.status;
-      return;
-    });
-    return result;
-  },
-
-  getCompletedTasks(){
-    let taskRemovals = [];
-    this.data.forEach((el)=>{
-      if (el.status===true) {
-        taskRemovals.push(el.text);
-      }
-    });
-    return taskRemovals;
-  },
-
-  getActiveTaskCount(){
-    let result = this.data.filter((el)=>{
-      return el.status === false;
-    });
-    return result.length;
-  },
-
   render() {
     // wipe the DOM to prepare new render
     this.$taskContainer.innerHTML = "";
 
-    if (this.data.length > 0){
+    if (Datastore.getAll().length > 0){
 
       // remove the check all button's invisible class
       this.$checkAll.className = "check-all";
 
       // overwrite the current allTasks DOM node array with new data
-      this.$allTasks = Builder.buildTasks(this.data, this.menuFilter);
+      this.$allTasks = Builder.buildTasks(Datastore.getAll(), this.menuFilter);
 
       // append all tasks the taskContainer
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
@@ -221,10 +180,10 @@ const App = {
       this.bindStatefulEvents();
 
       // update active task count
-      this.$count.innerHTML = `${this.getActiveTaskCount()} Tasks Left`;
+      this.$count.innerHTML = `${Datastore.getActiveTaskCount()} Tasks Left`;
 
       // show the clear button if there are completed tasks
-      this.data.length > this.getActiveTaskCount()
+      Datastore.getAll().length > Datastore.getActiveTaskCount()
         ? this.$clear.className = "clear"
         : this.$clear.className = "clear invisible";
 
