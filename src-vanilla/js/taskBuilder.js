@@ -1,17 +1,17 @@
 // Purpose: For a given data object and filter, create DOM Elements
 
 const Builder = {
-  buildTasks(data, filterState) {
+  buildTasks(data, menuFilter) {
 
     let divArray = [];
 
-    if (filterState==="active") {
+    if (menuFilter==="active") {
       data = data.filter((el)=>{
-        return el.completed === false;
+        return el.status === false;
       });
-    } else if (filterState==="completed") {
+    } else if (menuFilter==="completed") {
       data = data.filter((el)=>{
-        return el.completed === true;
+        return el.status === true;
       });
     }
 
@@ -33,8 +33,8 @@ const Builder = {
       button.className = "remove invisible";
       button.innerHTML = "x";
 
-      //state check
-      if (el.completed) {
+      //status check
+      if (el.status) {
         checkbox.checked = true;
         span.className = "completed";
       } else {

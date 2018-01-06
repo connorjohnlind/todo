@@ -5,7 +5,7 @@ const App = {
 
   data: [],  // source of truth - related to tasks in DOM via text property
 
-  filterState: null,  // mirrors the DOM's menu
+  menuFilter: null,  // mirrors the DOM's menu
 
   init() {
     this.cacheDom();
@@ -46,7 +46,7 @@ const App = {
         toggle = !Helper.identicalStatus(this.data).value;
       }
       this.$allTasks.forEach(div=>{
-        this.toggleTaskState(div.children[1].innerText, toggle);
+        this.setTaskState(div.children[1].innerText, toggle);
       });
     });
 
@@ -93,7 +93,7 @@ const App = {
       });
 
       div.firstChild.addEventListener("click", ()=>{
-        this.toggleTaskState(div.children[1].innerText);
+        this.setTaskState(div.children[1].innerText);
       });
 
       div.children[1].addEventListener("dblclick", ()=> {
@@ -129,12 +129,12 @@ const App = {
   },
 
   addTask(value) {
-    this.data.push({text: value, completed: false});
+    this.data.push({text: value, status: false});
     this.render();
   },
 
-  filterTasks(filterState) {
-    this.filterState = filterState;
+  filterTasks(menuFilter) {
+    this.menuFilter = menuFilter;
     this.render();
   },
 
@@ -154,14 +154,11 @@ const App = {
     })
   },
 
-  // TO DO: RENAME TO SET TASK STATE
-  // TO DO: RENAME DATA OBJECT FROM 'COMPLETED' TO 'STATE'
-
   // optional value param sets the value
-  toggleTaskState(taskText, value=null) {
+  setTaskState(taskText, value=null) {
     this.data.forEach(el=>{
       if (el.text === taskText) {
-        el.completed = value || !el.completed;
+        el.status = value || !el.status;
       }
     })
     this.render();
@@ -170,7 +167,7 @@ const App = {
   getCompletedTasks(){
     let taskRemovals = [];
     this.data.forEach((el)=>{
-      if (el.completed===true) {
+      if (el.status===true) {
         taskRemovals.push(el.text);
       }
     });
@@ -179,7 +176,7 @@ const App = {
 
   getActiveTaskCount(){
     let result = this.data.filter((el)=>{
-      return el.completed === false;
+      return el.status === false;
     });
     return result.length;
   },
@@ -194,7 +191,7 @@ const App = {
       this.$checkAll.className = "check-all";
 
       // overwrite the current allTasks DOM node array with new data
-      this.$allTasks = Builder.buildTasks(this.data, this.filterState);
+      this.$allTasks = Builder.buildTasks(this.data, this.menuFilter);
 
       // append all tasks the taskContainer
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
