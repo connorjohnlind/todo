@@ -46,7 +46,7 @@ const App = {
         toggle = !Helper.identicalStatus(this.data).value;
       }
       this.$allTasks.forEach(div=>{
-        this.setTaskState(div.children[1].innerText, toggle);
+        this.setTaskState(div.querySelector('.task-span').innerText, toggle);
       });
     });
 
@@ -81,49 +81,57 @@ const App = {
     // to do: remove event listeners to prevent memory leaks, must use named event handler function
 
     this.$allTasks.forEach((div)=>{
-      // div.lastChild === 'X' button
-      // div.children[1].innerText === task text
+      let checkbox = div.querySelector('.task-checkbox'),
+          span = div.querySelector('.task-span'),
+          input = div.querySelector('.task-edit'),
+          button = div.querySelector('.task-remove');
+
 
       div.addEventListener("mouseover", ()=>{
-        div.lastChild.className = "remove"; // removes invisible class
+        button.className = "task-remove"; // removes invisible class
       });
 
       div.addEventListener("mouseleave", ()=>{
-        div.lastChild.className = "remove invisible"; // adds invisible class
+        button.className = "task-remove invisible"; // adds invisible class
       });
 
-      div.firstChild.addEventListener("click", ()=>{
-        this.setTaskState(div.children[1].innerText);
+      checkbox.addEventListener("click", ()=>{
+        this.setTaskState(span.innerText);
       });
 
-      div.children[1].addEventListener("dblclick", ()=> {
-        div.children[1].className = "hidden";
-        div.children[2].value = div.children[1].innerHTML;
-        div.children[2].className = "task-edit";
-        div.children[2].focus();
+      span.addEventListener("dblclick", ()=> {
+        span.className = "task-span hidden";
+        input.value = span.innerHTML;
+        input.className = "task-edit";
+        input.focus();
       });
 
-      div.children[2].addEventListener("keypress", ()=>{
-        if ((event.which == 13 || event.keyCode == 13) && div.children[2].value !== ""){
-          this.setTaskText(div.children[1].innerHTML, div.children[2].value);
-          div.children[1].innerHTML = div.children[2].value;
-          div.children[2].className = "task-edit hidden";
-          div.children[1].className = "";
+      input.addEventListener("keypress", ()=>{
+        if ((event.which == 13 || event.keyCode == 13) && input.value !== ""){
+          this.setTaskText(span.innerHTML, input.value);
+          span.innerHTML = input.value;
+          input.className = "task-edit hidden";
+          
+          this.getStatus(span.innerHTML)
+            ? span.className = "task-span completed"
+            : span.className = "task-span";
         }
       });
 
-      div.children[2].addEventListener("focusout", ()=>{
-        if (div.children[2].value !== ""){
-          this.setTaskText(div.children[1].innerHTML, div.children[2].value);
-          div.children[1].innerHTML = div.children[2].value;
-          div.children[2].className = "task-edit hidden";
-          div.children[1].className = "";
+      input.addEventListener("focusout", ()=>{
+        if (input.value !== ""){
+          this.setTaskText(span.innerHTML, input.value);
+          span.innerHTML = input.value;
+          input.className = "task-edit hidden";
+          this.getStatus(span.innerHTML)
+            ? span.className = "task-span completed"
+            : span.className = "task-span";
         }
       });
 
-      div.lastChild.addEventListener("click", ()=>{
+      button.addEventListener("click", ()=>{
         // relate the DOM div to the data array and remove both
-        this.removeTasks(div.children[1].innerText.split());
+        this.removeTasks(span.innerText.split());
       });
     });
   },
@@ -162,6 +170,16 @@ const App = {
       }
     })
     this.render();
+  },
+
+  getStatus(taskText) {
+    let result;
+    this.data.forEach(el=>{
+      if (el.text === taskText)
+        result = el.status;
+      return;
+    });
+    return result;
   },
 
   getCompletedTasks(){

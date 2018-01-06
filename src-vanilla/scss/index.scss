@@ -76,6 +76,7 @@ input {
   width: 95%;
   max-width: 95%;
   border: 0;
+  border-radius: 5px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
               0 25px 50px 0 rgba(0, 0, 0, 0.1);
 
@@ -133,7 +134,7 @@ input {
       font-size: 24px;
       border-bottom: 1px solid #ededed;
 
-      input {
+      .task-checkbox {
         width: 12%;
         height: 100%;
         appearance: none;
@@ -153,7 +154,7 @@ input {
 
       }
 
-      span {
+      .task-span {
         width: 81%;
         height: 100%;
         text-align: left;
@@ -184,7 +185,7 @@ input {
         font-smoothing: antialiased;
       }
 
-      .remove {
+      .task-remove {
         font-size: 35px;
         width: 7%;
         padding-bottom: 7px;

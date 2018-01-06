@@ -25,21 +25,22 @@ const Builder = {
 
       div.className = "task flex row";
       checkbox.type = "checkbox";
-      checkbox.className = "checkbox";
+      checkbox.className = "task-checkbox";
       span.innerHTML = el.text;
+      span.className = "task-span";
       input.type = "text";
       input.innerHTML = el.text;
       input.className = "task-edit hidden";
-      button.className = "remove invisible";
+      button.className = "task-remove invisible";
       button.innerHTML = "x";
 
       //status check
       if (el.status) {
         checkbox.checked = true;
-        span.className = "completed";
+        span.className = "task-span completed";
       } else {
         checkbox.checked = false;
-        span.className = "";
+        span.className = "task-span";
       }
 
       div.append(checkbox, span, input, button);
