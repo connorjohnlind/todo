@@ -4,8 +4,6 @@ import Helper from './helper.js';
 
 const App = {
 
-  menuFilter: null,  // source of truth for the DOM's menu
-
   init() {
     this.cacheDom();
     this.render();
@@ -41,10 +39,9 @@ const App = {
     this.$checkAll.addEventListener("click", ()=>{
       // mark all tasks as completed if task statuses are mixed
       let toggle = true;
-      let data = Datastore.getAll();
-      // if all tasks have identical status, just swap them
-      if (Helper.identicalStatus(data).identical) {
-        toggle = !Helper.identicalStatus(data).value;
+      // if all tasks have identical status, toggle the status
+      if (Datastore.getIdenticalStatus().isIdentical) {
+        toggle = !Datastore.getIdenticalStatus().value;
       }
       this.$allTasks.forEach(div=>{
         Datastore.setTaskStatus(div.querySelector('.task-span').innerText, toggle);
@@ -62,19 +59,22 @@ const App = {
     this.$filterAll.addEventListener("click", ()=>{
       this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
       Helper.addClass(this.$filterAll, "selected");
-      this.filterTasks("all");
+      Datastore.setFilter("all");
+      this.render();
     });
 
     this.$filterActive.addEventListener("click", ()=>{
       this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
       Helper.addClass(this.$filterActive, "selected");
-      this.filterTasks("active");
+      Datastore.setFilter("active");
+      this.render();
     });
 
     this.$filterCompleted.addEventListener("click", ()=>{
       this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
       Helper.addClass(this.$filterCompleted, "selected");
-      this.filterTasks("completed");
+      Datastore.setFilter("completed");
+      this.render();
     });
   },
 
@@ -83,7 +83,7 @@ const App = {
     /****** TASK EVENTS *******/
     // to do: remove event listeners to prevent memory leaks, must use named event handler function
 
-    this.$allTasks.forEach((div)=>{
+    this.$allTasks.forEach(div=>{
       let checkbox = div.querySelector('.task-checkbox'),
           span = div.querySelector('.task-span'),
           input = div.querySelector('.task-edit'),
@@ -148,11 +148,6 @@ const App = {
     });
   },
 
-  filterTasks(menuFilter) {
-    this.menuFilter = menuFilter;
-    this.render();
-  },
-
   render() {
     // wipe the DOM to prepare new render
     this.$taskContainer.innerHTML = "";
@@ -163,10 +158,10 @@ const App = {
       Helper.removeClass(this.$checkAll, "invisible");
 
       // overwrite the current allTasks DOM node array with new data
-      this.$allTasks = Builder.buildTasks(Datastore.getAll(), this.menuFilter);
+      this.$allTasks = Builder.buildTasks(Datastore.getAll(), Datastore.getFilter());
 
       // append all tasks the taskContainer
-      this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
+      this.$allTasks.forEach(div=>{this.$taskContainer.append(div)});
 
       // show task container
       Helper.removeClass(this.$taskContainer, "hidden");

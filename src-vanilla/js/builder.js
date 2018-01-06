@@ -1,15 +1,15 @@
 // Purpose: For a given data object and filter, create DOM Elements
 
 const Builder = {
-  buildTasks(data, menuFilter) {
+  buildTasks(data, filter) {
 
     let divArray = []; // Builder expects an array from Datastore
 
-    if (menuFilter === "active") {
+    if (filter === "active") {
       data = data.filter( el=> {
         return el.status === false;
       });
-    } else if (menuFilter === "completed") {
+    } else if (filter === "completed") {
       data = data.filter( el=> {
         return el.status === true;
       });

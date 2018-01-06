@@ -1,6 +1,8 @@
 const Datastore = {
   data: [],
 
+  filter: null,  // source of truth for the DOM's menu
+
   addTask(text) {
     this.data.push({text: text, status: false});
   },
@@ -29,6 +31,10 @@ const Datastore = {
     })
   },
 
+  setFilter(filter) {
+    this.filter = filter;
+  },
+
   getActiveTaskCount(){
     let result = this.data.filter((el)=>{
       return el.status === false;
@@ -44,6 +50,20 @@ const Datastore = {
       }
     });
     return taskRemovals;
+  },
+
+  getFilter() {
+    return this.filter;
+  },
+
+  // returns an object with parameters "isIdentical" and its value if so
+  getIdenticalStatus() {
+    for (var i = 0; i < this.data.length - 1; i++) {
+      if (this.data[i].status !== this.data[i + 1].status) {
+        return {isIdentical: false, value: null};
+      }
+    }
+    return {isIdentical: true, value: this.data[0].status};
   },
 
   getStatus(taskText) {
