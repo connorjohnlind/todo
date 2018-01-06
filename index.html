@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Todo App</title>
+  <title>todo app</title>
   <link rel="stylesheet" href="css/index.min.css">
 </head>
 
@@ -11,14 +11,16 @@
   <main class="flex">
     <h1>todo</h1>
     <div id="app" class="flex">
+
       <div class="top-bar flex row">
         <div class="check-all invisible">❯</div>
         <input type="text" class="task-input" name="task" placeholder="What to do?">
       </div>
-      <div class="task-container flex">
+
+      <div class="task-container flex hidden">
       </div>
 
-      <div class="menu flex row">
+      <div class="menu flex row hidden">
         <div class="count">XYZ Tasks Left</div>
         <ul class="filters flex row">
           <li id="filter-all" class="selected">All</li>
