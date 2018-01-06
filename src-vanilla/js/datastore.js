@@ -51,7 +51,6 @@ const Datastore = {
     this.data.forEach(el=>{
       if (el.text === taskText)
         result = el.status;
-      return;
     });
     return result;
   },

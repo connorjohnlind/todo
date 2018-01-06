@@ -59,35 +59,24 @@ const App = {
       this.render();
     });
 
-
-    // TO DO: Above this line, data is managed and renders happen.
-    //        Below this line, it's pure DOM
-    //        Need to think about consistency
-
-
     this.$filterAll.addEventListener("click", ()=>{
-      this.$filters.forEach(el=>el.className="");
-      this.$filterAll.className = "selected";
+      this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
+      Helper.addClass(this.$filterAll, "selected");
       this.filterTasks("all");
     });
 
     this.$filterActive.addEventListener("click", ()=>{
-      this.$filters.forEach(el=>el.className="");
-      this.$filterActive.className = "selected";
+      this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
+      Helper.addClass(this.$filterActive, "selected");
       this.filterTasks("active");
     });
 
     this.$filterCompleted.addEventListener("click", ()=>{
-      this.$filters.forEach(el=>el.className="");
-      this.$filterCompleted.className = "selected";
+      this.$filters.forEach(el=>Helper.removeClass(el, "selected"));
+      Helper.addClass(this.$filterCompleted, "selected");
       this.filterTasks("completed");
     });
   },
-
-
-
-
-
 
   bindStatefulEvents() {
 
@@ -101,24 +90,25 @@ const App = {
           button = div.querySelector('.task-remove');
 
       div.addEventListener("mouseover", ()=>{
-        button.className = "task-remove"; // removes invisible class
+        Helper.removeClass(button, "invisible");
       });
 
       div.addEventListener("mouseleave", ()=>{
-        button.className = "task-remove invisible"; // adds invisible class
+        Helper.addClass(button, "invisible");
       });
 
       checkbox.addEventListener("click", ()=>{
         Datastore.setTaskStatus(span.innerText);
         Datastore.getStatus(span.innerHTML)
-          ? span.className = "task-span completed"
-          : span.className = "task-span";
+          ? Helper.addClass(span, "completed")
+          : Helper.removeClass(span, "completed");
+        this.render();
       });
 
       span.addEventListener("dblclick", ()=> {
-        span.className = "task-span hidden";
+        Helper.addClass(span, "hidden");
         input.value = span.innerHTML;
-        input.className = "task-edit";
+        Helper.removeClass(input, "hidden");
         input.focus();
       });
 
@@ -126,11 +116,13 @@ const App = {
         if ((event.which == 13 || event.keyCode == 13) && input.value !== ""){
           Datastore.setTaskText(span.innerHTML, input.value);
           span.innerHTML = input.value;
-          input.className = "task-edit hidden";
+          Helper.addClass(input, "hidden");
 
           Datastore.getStatus(span.innerHTML)
-            ? span.className = "task-span completed"
-            : span.className = "task-span";
+            ? Helper.addClass(span, "completed")
+            : Helper.removeClass(span, "completed");
+
+          Helper.removeClass(span, "hidden");
         }
       });
 
@@ -138,10 +130,13 @@ const App = {
         if (input.value !== ""){
           Datastore.setTaskText(span.innerHTML, input.value);
           span.innerHTML = input.value;
-          input.className = "task-edit hidden";
+          Helper.addClass(input, "hidden");
+
           Datastore.getStatus(span.innerHTML)
-            ? span.className = "task-span completed"
-            : span.className = "task-span";
+            ? Helper.addClass(span, "completed")
+            : Helper.removeClass(span, "completed");
+
+          Helper.removeClass(span, "hidden");
         }
       });
 
@@ -165,7 +160,7 @@ const App = {
     if (Datastore.getAll().length > 0){
 
       // remove the check all button's invisible class
-      this.$checkAll.className = "check-all";
+      Helper.removeClass(this.$checkAll, "invisible");
 
       // overwrite the current allTasks DOM node array with new data
       this.$allTasks = Builder.buildTasks(Datastore.getAll(), this.menuFilter);
@@ -174,7 +169,7 @@ const App = {
       this.$allTasks.forEach((div)=>{this.$taskContainer.append(div)});
 
       // show task container
-      this.$taskContainer.className = "task-container flex";
+      Helper.removeClass(this.$taskContainer, "hidden");
 
       // bind events to each new task
       this.bindStatefulEvents();
@@ -184,16 +179,16 @@ const App = {
 
       // show the clear button if there are completed tasks
       Datastore.getAll().length > Datastore.getActiveTaskCount()
-        ? this.$clear.className = "clear"
-        : this.$clear.className = "clear invisible";
+        ? Helper.removeClass(this.$clear, "invisible")
+        : Helper.addClass(this.$clear, "invisible");
 
       // show the menu
-      this.$menu.className = "menu flex row";
+      Helper.removeClass(this.$menu, "hidden");
 
     } else {
-      this.$checkAll.className = "check-all invisible";
-      this.$taskContainer.className = "task-container flex hidden";
-      this.$menu.className = "menu flex row hidden";
+      Helper.addClass(this.$checkAll, "invisible");
+      Helper.addClass(this.$taskContainer, "hidden");
+      Helper.addClass(this.$menu, "hidden");
     }
 
     this.$taskInput.focus();
