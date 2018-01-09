@@ -1,1 +1,1 @@
-Two Renditions of a To Do List
+A Vanilla Javascript Todo App with a React-like Architecture
