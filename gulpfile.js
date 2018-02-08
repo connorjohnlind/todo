@@ -19,13 +19,13 @@ const autoprefixer = require('autoprefixer'),
 
 const config = {
   src: {
-    root: 'src-vanilla',
-    css: 'src-vanilla/css',
-    jsEntry: 'src-vanilla/js/index.js',
-    jsWatch: 'src-vanilla/js/**/*.js',
-    sassEntry: 'src-vanilla/scss/index.scss',
-    sassWatch: 'src-vanilla/scss/**/*.scss',
-    htmlWatch: 'src-vanilla/*.html'
+    root: 'src',
+    css: 'src/css',
+    jsEntry: 'src/js/index.js',
+    jsWatch: 'src/js/**/*.js',
+    sassEntry: 'src/scss/index.scss',
+    sassWatch: 'src/scss/**/*.scss',
+    htmlWatch: 'src/*.html'
   },
   dist: {
     root: 'dist',

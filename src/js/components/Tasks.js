@@ -1,9 +1,9 @@
 // Purpose: For a given data object and filter, create DOM Elements
 
-const Builder = {
-  buildTasks(data, filter) {
+const Tasks = {
+  build(data, filter) {
 
-    let divArray = []; // Builder expects an array from Datastore
+    let divArray = []; // Tasks expects an array from Datastore
 
     if (filter === "active") {
       data = data.filter( el=> {
@@ -43,9 +43,9 @@ const Builder = {
       divArray.push(div);
     });
 
+    console.log('task builder');
     return divArray;
   }
-
 }
 
-export default Builder;
+export default Tasks;

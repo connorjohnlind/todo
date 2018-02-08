@@ -1,6 +1,5 @@
 const Datastore = {
   data: [],
-
   filter: null,  // source of truth for the DOM's menu
 
   addTask(text) {

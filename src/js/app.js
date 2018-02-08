@@ -1,5 +1,5 @@
 import Datastore from './datastore.js'
-import Builder from './builder.js';
+import Tasks from './components/Tasks';
 import Helper from './helper.js';
 
 const App = {
@@ -149,16 +149,18 @@ const App = {
   },
 
   render() {
-    // wipe the DOM to prepare new render
+    // wipe the taskContainer to prepare new render
     this.$taskContainer.innerHTML = "";
 
     if (Datastore.getAll().length > 0){
+
+      console.log('render');
 
       // remove the check all button's invisible class
       Helper.removeClass(this.$checkAll, "invisible");
 
       // overwrite the current allTasks DOM node array with new data
-      this.$allTasks = Builder.buildTasks(Datastore.getAll(), Datastore.getFilter());
+      this.$allTasks = Tasks.build(Datastore.getAll(), Datastore.getFilter());
 
       // append all tasks the taskContainer
       this.$allTasks.forEach(div=>{this.$taskContainer.append(div)});
